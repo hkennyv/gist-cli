@@ -13,7 +13,8 @@ from pprint import pprint
 from getpass import getpass
 import requests
 
-URI = 'https://api.github.com/gists'
+# URI = 'https://api.github.com/gists'
+URI = 'http://localhost:7878'
 
 if __name__ == '__main__':
     # ignore self filename

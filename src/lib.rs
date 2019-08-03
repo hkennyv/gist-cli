@@ -4,11 +4,11 @@ extern crate serde_json;
 use std::fs;
 use std::collections::HashMap;
 use serde::{Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 #[derive(Debug, Serialize)]
 struct GistJson {
-    files: Value,
+    files: HashMap<String, Value>,
     description: String,
     public: bool,
 }
@@ -47,36 +47,26 @@ pub fn parse_args(mut args: std::env::Args) -> Config {
         };
     }
 
-    println!("filenames: {:?}", filenames);
-
     Config { filenames, description, public }
 }
 
-pub fn build_json(config: &Config) {
-    let files: HashMap<String, String> = HashMap::new();
+pub fn build_json(config: &Config) -> String {
+    let mut files: HashMap<String, Value> = HashMap::new();
 
     for filename in &config.filenames {
-        println!("{}", filename);
+        let content_string = fs::read_to_string(filename).unwrap();
+        let mut content = Map::new();
+        content.insert("content".to_string(), Value::from(content_string));
+        files.insert(filename.to_string(), Value::from(content));
     }
 
     let gist_json = GistJson {
-        files: Value::from(5),
+        files: files,
         description: config.description.to_string(),
         public: config.public,
     };
-    let j = serde_json::to_string(&gist_json);
-    println!("{:?}", j);
+    let j = serde_json::to_string(&gist_json).unwrap();
+    println!("{}", j);
+    return j;
 }
 
-pub fn read_files() {
-    // let mut filemap: HashMap<String, String> = HashMap::new();
-
-    // for filename in &filenames {
-    //     let content = fs::read_to_string(filename).unwrap();
-    //     let content = match fs::read_to_string(filename)?;
-    //     filemap.insert(filename.to_string(), content);
-    // }
-
-    // println!("filenames: {:?}", filenames);
-    // println!("filemap: {:?}", filemap);
-}
