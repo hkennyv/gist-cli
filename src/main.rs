@@ -1,8 +1,9 @@
 extern crate requests;
 
-use std::env;
+use gist_cli;
 
-static URI: &str = "https://api.github.com/gists";
+static URI: &'static str = "https://api.github.com/gists";
 
 fn main() {
+    gist_cli::parse_args(std::env::args());
 }
